@@ -9,26 +9,33 @@ public class KidScript : MonoBehaviour {
 
     Rigidbody rb;
     Animator animator;
+    CameraScript camScript;
     bool isJumping;
 
     IEnumerator Turning;
     float desiredAngle = 9999;
 
     bool isCharacterActive;
+    bool isDead;
 	// Use this for initialization
 	void Start ()
     {
+        isDead = false;
         isCharacterActive = true;
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
         isJumping = false;
 
         Turning = TurnTo(desiredAngle);
+        camScript = GameObject.Find("Main Camera").GetComponent<CameraScript>();
 	}
 	
 	// Update is called once per frame
 	void Update ()
     {
+        if (isDead)
+            return;
+
         if(isCharacterActive)
         {
             PlayerMovement();
@@ -39,11 +46,39 @@ public class KidScript : MonoBehaviour {
                 isCharacterActive = false;
             }
 
-            return;
+            if(isJumping)
+            {
+                RaycastHit hit;
+
+                if (Physics.Raycast(transform.position, -transform.up, out hit, .2f))
+                {
+                    if (hit.transform.tag == "Ground")
+                    {
+                        animator.SetBool("isJumping", false);
+                        isJumping = false;
+                    }
+                }
+
+                //if(Physics.Raycast(transform.position, transform.forward, out hit, .1f))
+                //{
+                //    rb.velocity = new Vector2(Input.GetAxis("Horizontal") * movementSpeed * Time.deltaTime, rb.velocity.y);
+                //}
+
+                //if (Physics.Raycast(transform.position, -transform.forward, out hit, .1f))
+                //{
+
+                //}
+            }
+        }
+        else
+        {
+            if (Input.GetKeyDown(KeyCode.C))
+            {
+                isCharacterActive = true;
+                camScript.character = transform;
+            }
         }
 
-        if (Input.GetKeyDown(KeyCode.C))
-            isCharacterActive = true;
     }
 
     void PlayerMovement()
@@ -52,9 +87,9 @@ public class KidScript : MonoBehaviour {
 
         rb.velocity = new Vector2(Input.GetAxis("Horizontal") * movementSpeed * Time.deltaTime, rb.velocity.y);
 
-        if(rb.velocity.normalized.x != 0)
+        if((int)rb.velocity.normalized.x != 0)
         {
-            if (rb.velocity.normalized != prevVelocity.normalized)
+            if (rb.velocity.normalized.x != prevVelocity.normalized.x)
             {
                 desiredAngle = 90 * rb.velocity.normalized.x;
 
@@ -74,7 +109,6 @@ public class KidScript : MonoBehaviour {
             StartCoroutine(JumpCoroutine());
         }
     }
-
 
     IEnumerator JumpCoroutine()
     {
@@ -113,13 +147,16 @@ public class KidScript : MonoBehaviour {
         Quaternion currentRot = Quaternion.Euler(transform.eulerAngles);
         Quaternion desiredRot = Quaternion.Euler(new Vector3(0, desiredAngle, 0));
 
-        while ( Quaternion.Angle(currentRot, desiredRot) > 8)
+        while (Quaternion.Angle(currentRot, desiredRot) > 5)
         {
-            transform.eulerAngles = Vector3.Lerp(transform.eulerAngles, new Vector3( 0, desiredAngle, 0), 4 * Time.deltaTime);
+            transform.eulerAngles = Vector3.Lerp(transform.eulerAngles, new Vector3(0, desiredAngle, 0), 4 * Time.deltaTime);
             currentRot = Quaternion.Euler(transform.eulerAngles);
             yield return null;
         }
 
+        transform.eulerAngles = new Vector3(0, desiredAngle, 0);
+
+        yield return null;
     }
 
 
@@ -136,9 +173,15 @@ public class KidScript : MonoBehaviour {
         {
             if (isJumping)
             {
-                isJumping = false;
-                animator.SetBool("isJumping", false);
+                //isJumping = false;
             }
+        }
+
+        if(collision.transform.tag == "Spike")
+        {
+            StopCharacter();
+            isDead = true;
+            animator.Play("DeathAnim");
         }
     }
 }
