@@ -196,7 +196,7 @@ Transform:
   m_LocalScale: {x: 32, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &777075412
 GameObject:
@@ -209,8 +209,9 @@ GameObject:
   - component: {fileID: 777075415}
   - component: {fileID: 777075414}
   - component: {fileID: 777075413}
+  - component: {fileID: 777075417}
   m_Layer: 0
-  m_Name: Capsule
+  m_Name: Kid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -282,9 +283,21 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 846912942}
+  - {fileID: 1737694049}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &777075417
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 777075412}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b421e02b605b35e419aa84877ad353ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &846912941
 GameObject:
   m_ObjectHideFlags: 0
@@ -297,7 +310,7 @@ GameObject:
   - component: {fileID: 846912944}
   - component: {fileID: 846912943}
   m_Layer: 0
-  m_Name: Sphere
+  m_Name: Dog
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -310,7 +323,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 846912941}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.62, y: -0.55, z: 0.48}
+  m_LocalPosition: {x: 0.56, y: -0.55, z: -0.42}
   m_LocalScale: {x: 0.69883037, y: 0.83014053, z: 0.62352437}
   m_Children: []
   m_Father: {fileID: 777075416}
@@ -440,11 +453,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1737694046}
-  m_LocalRotation: {x: -0.021633197, y: -0, z: -0, w: 0.999766}
-  m_LocalPosition: {x: 0, y: 1.54, z: -10}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.9698944, z: -9.917328}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 777075416}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: -2.479, y: 0, z: 0}
 --- !u!1 &2057770210
@@ -511,5 +524,5 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
