@@ -7,21 +7,19 @@ public class LeverScript : MonoBehaviour {
 
     bool canPull;
 
+    [SerializeField]
     Transform platform;
 
-    Vector3 initialPosition;
-
+    [SerializeField]
     Transform targetTransform;
+
+    Vector3 initialPosition;
 
     bool isTowardsTarget;
 
 	// Use this for initialization
 	void Start ()
     {
-        platform = transform.parent;
-        targetTransform = platform.Find("Target").transform;
-        targetTransform.parent = null;
-        transform.parent = null;
         initialPosition = platform.position;
 
         canPull = false;
