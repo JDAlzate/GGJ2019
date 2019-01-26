@@ -37,11 +37,11 @@ public class DoorScript : MonoBehaviour {
     {
         if(!isOpen && collision.CompareTag("Player"))
         {
-            KidScript kidScript = collision.gameObject.GetComponent<KidScript>();
+            BrotherController bc = collision.gameObject.GetComponent<BrotherController>();
 
-            if(kidScript.GetKeyCount() > 0)
+            if(bc.GetKeyCount() > 0)
             {
-                kidScript.UseKey();
+                bc.UseKey();
                 isOpen = true;
             }
         }
