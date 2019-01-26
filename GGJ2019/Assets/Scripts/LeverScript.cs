@@ -17,6 +17,8 @@ public class LeverScript : MonoBehaviour {
 
     bool isTowardsTarget;
 
+    [SerializeField] Material[] colors = new Material[2];
+
 	// Use this for initialization
 	void Start ()
     {
@@ -29,9 +31,14 @@ public class LeverScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-        if (Input.GetMouseButtonDown(1) && canPull)
+        if (Input.GetKeyDown(KeyCode.E) && canPull)
         {
             isTowardsTarget = !isTowardsTarget;
+
+            if(isTowardsTarget)
+                transform.Find("Base").Find("Handle").GetComponent<Renderer>().material = colors[0];
+            else
+                transform.Find("Base").Find("Handle").GetComponent<Renderer>().material = colors[1];
         }
 
         if (!isTowardsTarget)

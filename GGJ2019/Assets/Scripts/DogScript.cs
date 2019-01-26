@@ -75,11 +75,11 @@ public class DogScript : MonoBehaviour
         {
             if(!stay)
             {
-                //Vector3 newVec = Vector3.zero;
-                //transform.position = Vector3.SmoothDamp(transform.position, playerFollowPos.position, ref newVec, .1f, movementSpeed);
-                //rb.velocity = newVec;
+                Vector3 newVec = Vector3.zero;
+                transform.position = Vector3.SmoothDamp(transform.position, playerFollowPos.position, ref newVec, .1f, movementSpeed);
+                rb.velocity = newVec;
 
-                transform.position = Vector3.Lerp(transform.position, playerFollowPos.position, 3 * Time.deltaTime);
+                //transform.position = Vector3.Lerp(transform.position, playerFollowPos.position, 3 * Time.deltaTime);
             }
 
             if (Input.GetKeyDown(KeyCode.C))
