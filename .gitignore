@@ -34,3 +34,7 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+
+GGJ2019/Assets/Scenes/MyTestScene\.unity
+
+GGJ2019/Assets/Scenes/MyTestScene\.unity\.meta
