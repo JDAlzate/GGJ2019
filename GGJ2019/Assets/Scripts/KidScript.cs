@@ -11,37 +11,65 @@ public class KidScript : MonoBehaviour {
     Animator animator;
     bool isJumping;
 
+    IEnumerator Turning;
+    float desiredAngle = 9999;
+
+    bool isCharacterActive;
 	// Use this for initialization
 	void Start ()
     {
+        isCharacterActive = true;
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
         isJumping = false;
+
+        Turning = TurnTo(desiredAngle);
 	}
 	
 	// Update is called once per frame
 	void Update ()
     {
-        PlayerMovement();
-	}
+        if(isCharacterActive)
+        {
+            PlayerMovement();
+
+            if (Input.GetKeyDown(KeyCode.C))
+            {
+                StopCharacter();
+                isCharacterActive = false;
+            }
+
+            return;
+        }
+
+        if (Input.GetKeyDown(KeyCode.C))
+            isCharacterActive = true;
+    }
 
     void PlayerMovement()
     {
+        Vector3 prevVelocity = rb.velocity;
+
         rb.velocity = new Vector2(Input.GetAxis("Horizontal") * movementSpeed * Time.deltaTime, rb.velocity.y);
-        animator.SetFloat("Speed", Mathf.Abs(rb.velocity.x));
 
-
-        if (Input.GetKeyDown(KeyCode.D))
+        if(rb.velocity.normalized.x != 0)
         {
-            transform.eulerAngles = new Vector3(transform.eulerAngles.x, 90, transform.eulerAngles.z);
-        }
-        
-        if(Input.GetKeyDown(KeyCode.A))
-        {
-            transform.eulerAngles = new Vector3(transform.eulerAngles.x, -90, transform.eulerAngles.z);
+            if (rb.velocity.normalized != prevVelocity.normalized)
+            {
+                desiredAngle = 90 * rb.velocity.normalized.x;
+
+                StopCoroutine(Turning);
+                Turning = TurnTo(desiredAngle);
+                StartCoroutine(Turning);
+            }
         }
 
-        if(Input.GetKeyDown(KeyCode.Space) && !isJumping)
+        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.A))
+            animator.SetBool("isMoving", true);
+        else
+            animator.SetBool("isMoving", false);
+
+        if (Input.GetKeyDown(KeyCode.Space) && !isJumping)
         {
             StartCoroutine(JumpCoroutine());
         }
@@ -51,12 +79,15 @@ public class KidScript : MonoBehaviour {
     IEnumerator JumpCoroutine()
     {
         isJumping = true;
+        animator.SetBool("isJumping", true);
+
+        yield return new WaitForSeconds(.2f);
 
         rb.velocity = new Vector2(rb.velocity.x, 0);
         //Add force on the first frame of the jump
         rb.AddForce(Vector2.up * 8, ForceMode.Impulse);
 
-        float jumpTime = 2;
+        float jumpTime = .7f;
         float currentTime = 0;
 
         while(currentTime < jumpTime)
@@ -77,12 +108,37 @@ public class KidScript : MonoBehaviour {
     }
 
 
+    IEnumerator TurnTo(float desiredAngle)
+    {
+        Quaternion currentRot = Quaternion.Euler(transform.eulerAngles);
+        Quaternion desiredRot = Quaternion.Euler(new Vector3(0, desiredAngle, 0));
+
+        while ( Quaternion.Angle(currentRot, desiredRot) > 8)
+        {
+            transform.eulerAngles = Vector3.Lerp(transform.eulerAngles, new Vector3( 0, desiredAngle, 0), 4 * Time.deltaTime);
+            currentRot = Quaternion.Euler(transform.eulerAngles);
+            yield return null;
+        }
+
+    }
+
+
+    void StopCharacter()
+    {
+        animator.SetBool("isMoving", false);
+        rb.velocity = Vector3.zero;
+    }
+
+
     private void OnCollisionEnter(Collision collision)
     {
         if(collision.transform.tag == "Ground")
         {
             if (isJumping)
+            {
                 isJumping = false;
+                animator.SetBool("isJumping", false);
+            }
         }
     }
 }
