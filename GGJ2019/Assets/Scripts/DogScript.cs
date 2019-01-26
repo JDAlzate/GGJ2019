@@ -42,6 +42,7 @@ public class DogScript : MonoBehaviour
     {
         if (isDead)
             return;
+
         if (Input.GetKeyDown(KeyCode.S))
         {
             stay = !stay;
@@ -58,23 +59,9 @@ public class DogScript : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.C))
             {
                 isCharacterActive = false;
-
                 transform.position = new Vector3(transform.position.x, transform.position.y, .1f);
             }
 
-            if (isJumping)
-            {
-                RaycastHit hit;
-
-                if (Physics.Raycast(transform.position, -transform.up, out hit, .2f))
-                {
-                    Debug.Log(hit.transform.tag);
-                    if (hit.transform.tag == "Ground")
-                    {
-                        isJumping = false;
-                    }
-                }
-            }
         }
         else
         {
@@ -83,17 +70,13 @@ public class DogScript : MonoBehaviour
                 Vector3 newVec = Vector3.zero;
                 transform.position = Vector3.SmoothDamp(transform.position, playerFollowPos.position, ref newVec, .1f, movementSpeed);
                 rb.velocity = newVec;
-
-                //transform.position = Vector3.Lerp(transform.position, playerFollowPos.position, 3 * Time.deltaTime);
             }
 
             if (Input.GetKeyDown(KeyCode.C))
             {
                 camScript.character = transform;
                 isCharacterActive = true;
-                camScript.character = transform;
-
-                transform.position = new Vector3(transform.position.x, transform.position.y, -.1f);
+                transform.position = new Vector3(transform.position.x, transform.position.y, 0);
             }
         }
     }
@@ -103,18 +86,6 @@ public class DogScript : MonoBehaviour
         Vector3 prevVelocity = rb.velocity;
         
         rb.velocity = new Vector2(Input.GetAxis("Horizontal") * movementSpeed * Time.deltaTime, rb.velocity.y);
-
-        if (rb.velocity.normalized.x != 0)
-        {
-            if (rb.velocity.normalized.x != prevVelocity.normalized.x)
-            {
-                desiredAngle = 90 * rb.velocity.normalized.x;
-
-                //StopCoroutine(Turning);
-                //Turning = TurnTo(desiredAngle);
-                //StartCoroutine(Turning);
-            }
-        }
 
         if (Input.GetKeyDown(KeyCode.Space) && !isJumping)
         {
@@ -164,7 +135,6 @@ public class DogScript : MonoBehaviour
         if(collision.transform.tag == "Ground" && isJumping)
         {
             isJumping = false;
-            camScript.character = null;
         }
 
         if (collision.transform.tag == "Spike" )
@@ -172,6 +142,7 @@ public class DogScript : MonoBehaviour
             if(isCharacterActive)
             {
                 isDead = true;
+                camScript.character = null;
                 rb.velocity = Vector3.zero;
             }
             else
