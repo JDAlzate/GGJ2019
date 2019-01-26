@@ -164,7 +164,7 @@ public class BrotherController : MonoBehaviour {
     IEnumerator JumpCoroutine()
     {
         isJumping = true;
-        animator.SetBool("isJumping", true);
+        animator.SetBool("jump", true);
 
         yield return new WaitForSeconds(.2f);
 
