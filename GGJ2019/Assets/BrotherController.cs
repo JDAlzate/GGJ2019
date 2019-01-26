@@ -31,6 +31,7 @@ public class BrotherController : MonoBehaviour
     [SerializeField] int keyCount;
 
     [SerializeField] GameObject kid;
+    [SerializeField] GameObject dog;
 
     GameObject carryItem;
     Transform raycastTransform;
@@ -50,7 +51,7 @@ public class BrotherController : MonoBehaviour
         raycastTransform = transform.Find("Raycast Position").transform;
         Turning = TurnTo(desiredAngle);
         camScript = GameObject.Find("Main Camera").GetComponent<CameraScript>();
-        canSwitchCharacter = kid != null;
+        canSwitchCharacter = kid != null && dog != null;
     }
 
     // Update is called once per frame
@@ -58,6 +59,23 @@ public class BrotherController : MonoBehaviour
     {
         if (isDead)
             return;
+
+        if (canSwitchCharacter && Input.GetKeyDown(KeyCode.F))
+        {
+            kid.transform.position = transform.position;
+
+            if (transform.rotation.y > 0)
+                kid.transform.rotation = Quaternion.Euler(0, 90, 0);
+            else
+                kid.transform.rotation = Quaternion.Euler(0, -90, 0);
+
+            dog.transform.position = transform.position;
+
+            kid.SetActive(true);
+            dog.SetActive(true);
+            gameObject.SetActive(false);
+            return;
+        }
 
         if (Input.GetKeyDown(KeyCode.Space))
             isSpacebarPressed = true;

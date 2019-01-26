@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class KidScript : MonoBehaviour {
 
+    [SerializeField] GameObject brother;
+    [SerializeField] GameObject dog;
     [SerializeField] float movementSpeed;
     [SerializeField] float jumpSpeed;
     [SerializeField] float jumpTime;
@@ -19,6 +21,8 @@ public class KidScript : MonoBehaviour {
     bool isCharacterActive;
     bool isDead;
     bool isSpacebarPressed;
+
+    bool canSwitchCharacter;
 	// Use this for initialization
 	void Start ()
     {
@@ -31,6 +35,7 @@ public class KidScript : MonoBehaviour {
 
         Turning = TurnTo(desiredAngle);
         camScript = GameObject.Find("Main Camera").GetComponent<CameraScript>();
+        canSwitchCharacter = brother != null && dog != null;
 	}
 	
 	// Update is called once per frame
@@ -39,6 +44,23 @@ public class KidScript : MonoBehaviour {
         if (isDead)
             return;
 
+        if(canSwitchCharacter && Input.GetKeyDown(KeyCode.F))
+        {
+            brother.transform.position = transform.position;
+
+            if (transform.rotation.y > 0)
+                brother.transform.rotation = Quaternion.Euler(0, 90, 0);
+            else
+                brother.transform.rotation = Quaternion.Euler(0, -90, 0);
+
+            brother.SetActive(true);
+            dog.SetActive(false);
+            gameObject.SetActive(false);
+            dog.GetComponent<DogScript>().stay = false;
+            dog.GetComponent<DogScript>().isCharacterActive = false;
+            isCharacterActive = true;
+            return;
+        }
         if(Input.GetKeyDown(KeyCode.Space))
             isSpacebarPressed = true;
 

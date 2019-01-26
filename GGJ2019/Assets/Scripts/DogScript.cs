@@ -9,8 +9,8 @@ public class DogScript : MonoBehaviour
     float desiredAngle;
 
     bool isJumping;
-    bool isCharacterActive;
-    [SerializeField] bool stay;
+    public bool isCharacterActive;
+    public bool stay;
 
     Rigidbody rb;
     Animator animator;
