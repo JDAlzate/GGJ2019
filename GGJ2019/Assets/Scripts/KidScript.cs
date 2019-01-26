@@ -194,7 +194,7 @@ public class KidScript : MonoBehaviour {
 
     private void OnCollisionEnter(Collision collision)
     {
-        if(collision.transform.tag == "Ground")
+        if(collision.transform.tag == "Ground" || collision.transform.CompareTag("Pickable"))
         {
             if (isJumping)
             {
@@ -207,6 +207,7 @@ public class KidScript : MonoBehaviour {
         {
             StopCharacter();
             isDead = true;
+            camScript.character = null;
             animator.Play("DeathAnim");
         }
     }
