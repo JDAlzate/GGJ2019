@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class BrotherController : MonoBehaviour {
+public class BrotherController : MonoBehaviour
+{
 
     Rigidbody rigidbody;
     Animator animator;
@@ -25,7 +26,11 @@ public class BrotherController : MonoBehaviour {
     bool isDead;
     bool isSpacebarPressed;
 
+    bool canSwitchCharacter;
+
     [SerializeField] int keyCount;
+
+    [SerializeField] GameObject kid;
 
     GameObject carryItem;
     Transform raycastTransform;
@@ -34,7 +39,7 @@ public class BrotherController : MonoBehaviour {
     float desiredAngle = 0;
 
     // Use this for initialization
-    void Start ()
+    void Start()
     {
         isSpacebarPressed = false;
         isDead = false;
@@ -45,81 +50,80 @@ public class BrotherController : MonoBehaviour {
         raycastTransform = transform.Find("Raycast Position").transform;
         Turning = TurnTo(desiredAngle);
         camScript = GameObject.Find("Main Camera").GetComponent<CameraScript>();
+        canSwitchCharacter = kid != null;
     }
-	
-	// Update is called once per frame
-	void Update ()
+
+    // Update is called once per frame
+    void Update()
     {
         if (isDead)
             return;
 
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
             isSpacebarPressed = true;
-        else
+        if (Input.GetKeyUp(KeyCode.Space))
             isSpacebarPressed = false;
 
-        if (isCharacterActive)
+        Vector3 prevVelocity = rigidbody.velocity;
+
+        move = Input.GetAxisRaw("Horizontal");
+
+        isMoving = (move != 0);
+        animator.SetBool("run", isMoving);
+        animator.SetBool("carry", isCarrying);
+
+        if (isMoving)
         {
-            Vector3 prevVelocity = rigidbody.velocity;
+            desiredAngle = 90 * move;
 
-            move = Input.GetAxisRaw("Horizontal");
+            StopCoroutine(Turning);
+            Turning = TurnTo(desiredAngle);
+            StartCoroutine(Turning);
+        }
 
-            isMoving = (move != 0);
-            animator.SetBool("run", isMoving);
-            animator.SetBool("carry", isCarrying);
-            
-            if(isMoving)
+        if (!isCarrying)
+        {
+            rigidbody.velocity = new Vector2(move * speed * Time.deltaTime, rigidbody.velocity.y);
+
+            if (Input.GetKeyDown(KeyCode.Space) && !isJumping)
             {
-                desiredAngle = 90 * move;
-
-                StopCoroutine(Turning);
-                Turning = TurnTo(desiredAngle);
-                StartCoroutine(Turning);
+                StartCoroutine(JumpCoroutine());
             }
 
-            if (!isCarrying)
+            if (Input.GetMouseButtonDown(0) && !isJumping)
             {
-                rigidbody.velocity = new Vector2(move * speed * Time.deltaTime, rigidbody.velocity.y);
+                Debug.DrawLine(raycastTransform.position, raycastTransform.position + raycastTransform.forward * 0.7f, Color.blue, 50);
 
-                if (Input.GetKeyDown(KeyCode.Space) && !isJumping)
+                RaycastHit hit;
+                if (Physics.Raycast(raycastTransform.position, raycastTransform.forward, out hit, 0.7f))
                 {
-                    StartCoroutine(JumpCoroutine());
-                }
-
-                if (Input.GetMouseButtonDown(0) && isGrounded)
-                {
-                    Debug.DrawLine(raycastTransform.position, raycastTransform.position + raycastTransform.forward * 0.7f, Color.blue, 50);
-
-                    RaycastHit hit;
-                    if (Physics.Raycast(raycastTransform.position, raycastTransform.forward, out hit, 0.7f))
+                    if (hit.transform.CompareTag("Pickable"))
                     {
-                        if (hit.transform.CompareTag("Pickable"))
-                        {
-                            carryItem = hit.transform.gameObject;
-                            carryItem.transform.parent = transform;
-                            isCarrying = true;
-                        }
+                        carryItem = hit.transform.gameObject;
+                        carryItem.transform.parent = transform;
+                        isCarrying = true;
                     }
                 }
             }
+        }
 
-            else if (isCarrying)
+        else if (isCarrying)
+        {
+            rigidbody.velocity = new Vector2(move * carryingSpeed * Time.deltaTime, rigidbody.velocity.y);
+
+            if (Input.GetMouseButtonUp(0) && !isJumping)
             {
-                rigidbody.velocity = new Vector2(move * carryingSpeed * Time.deltaTime, rigidbody.velocity.y);
-
-                if (Input.GetMouseButtonUp(0) && isGrounded)
-                {
-                    carryItem.transform.parent = null;
-                    carryItem = null;
-                    isCarrying = false;
-                }
+                carryItem.transform.parent = null;
+                carryItem = null;
+                isCarrying = false;
             }
         }
+
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if(collision.transform.CompareTag("Ground"))
+        if (collision.transform.CompareTag("Ground"))
         {
             if (isJumping)
             {
@@ -128,7 +132,7 @@ public class BrotherController : MonoBehaviour {
             }
         }
 
-        if(collision.transform.CompareTag("Key"))
+        if (collision.transform.CompareTag("Key"))
         {
             keyCount++;
             Destroy(collision.gameObject);
