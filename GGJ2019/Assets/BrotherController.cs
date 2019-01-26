@@ -48,7 +48,7 @@ public class BrotherController : MonoBehaviour {
     Vector3 point1;
 
     [SerializeField]
-    float debugRadius = 0.6;
+    float debugRadius = 0.6f;
 
     // Use this for initialization
     void Start ()
@@ -68,26 +68,6 @@ public class BrotherController : MonoBehaviour {
 
         if (!isCarrying)
         {
-            //Collider[] colliders = Physics.OverlapCapsule(raycastTransform.position + point0, raycastTransform.position + point1, debugRadius);
-            Collider[] colliders = Physics.OverlapSphere(raycastTransform.position, debugRadius);
-            foreach (Collider c in colliders)
-            {
-                if (!c.CompareTag("Player") && !c.isTrigger)
-                {
-                    if (c.transform.position.x > transform.position.x)
-                    {
-                        if (move > 0)
-                            move = 0;
-                    }
-
-                    else
-                    {
-                        if (move < 0)
-                            move = 0;
-                    }
-                }
-
-            }
             isMoving = move != 0;
             rigidbody.velocity = new Vector2(move * speed, rigidbody.velocity.y);
 
@@ -173,11 +153,6 @@ public class BrotherController : MonoBehaviour {
             keyCount++;
             Destroy(other.gameObject);
         }
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-       
     }
 
     public int GetKeyCount()
