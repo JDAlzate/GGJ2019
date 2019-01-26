@@ -13,8 +13,8 @@ public class BrotherController : MonoBehaviour {
     [SerializeField] Transform camTransform;
     [SerializeField] float speed;
     [SerializeField] float carryingSpeed;
-    [SerializeField] float jumpForce;
-    [SerializeField] float deathSpeed;
+    [SerializeField] float jumpSpeed;
+    [SerializeField] float jumpTime;
 
     float move;
     bool isGrounded;
@@ -63,7 +63,6 @@ public class BrotherController : MonoBehaviour {
             Vector3 prevVelocity = rigidbody.velocity;
 
             move = Input.GetAxisRaw("Horizontal");
-            rigidbody.velocity = new Vector2(move * speed * Time.deltaTime, rigidbody.velocity.y);
 
             isMoving = (move != 0);
             animator.SetBool("run", isMoving);
@@ -78,30 +77,17 @@ public class BrotherController : MonoBehaviour {
                 StartCoroutine(Turning);
             }
 
-            // MY CODE START
-            isMoving = move != 0;
-            animator.SetBool("run", isMoving);
-
             if (!isCarrying)
             {
-                isMoving = move != 0;
-                rigidbody.velocity = new Vector2(move * speed, rigidbody.velocity.y);
+                rigidbody.velocity = new Vector2(move * speed * Time.deltaTime, rigidbody.velocity.y);
 
-                if (isMoving)
+                if (Input.GetKeyDown(KeyCode.Space) && !isJumping)
                 {
-                    transform.rotation = move > 0 ? Quaternion.Euler(0, 90, 0) : Quaternion.Euler(0, -90, 0);
-                }
-
-                if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
-                {
-                    rigidbody.AddForce(new Vector2(0, jumpForce));
-
-                    animator.SetBool("jump", true);
+                    StartCoroutine(JumpCoroutine());
                 }
 
                 if (Input.GetMouseButtonDown(0) && isGrounded)
                 {
-
                     Debug.DrawLine(raycastTransform.position, raycastTransform.position + raycastTransform.forward * 0.7f, Color.blue, 50);
 
                     RaycastHit hit;
@@ -119,7 +105,7 @@ public class BrotherController : MonoBehaviour {
 
             else if (isCarrying)
             {
-                rigidbody.velocity = new Vector2(move * carryingSpeed, rigidbody.velocity.y);
+                rigidbody.velocity = new Vector2(move * carryingSpeed * Time.deltaTime, rigidbody.velocity.y);
 
                 if (Input.GetMouseButtonUp(0) && isGrounded)
                 {
@@ -135,9 +121,11 @@ public class BrotherController : MonoBehaviour {
     {
         if(collision.transform.CompareTag("Ground"))
         {
-            isGrounded = true;
-            animator.SetBool("jump", false);
-            animator.SetBool("grounded", true);
+            if (isJumping)
+            {
+                isJumping = false;
+                animator.SetBool("jump", false);
+            }
         }
 
         if(collision.transform.CompareTag("Key"))
@@ -145,14 +133,12 @@ public class BrotherController : MonoBehaviour {
             keyCount++;
             Destroy(collision.gameObject);
         }
-    }
 
-    private void OnCollisionExit(Collision collision)
-    {
-        if(collision.transform.CompareTag("Ground"))
+        if (collision.transform.CompareTag("Spike"))
         {
-            isGrounded = false;
-            animator.SetBool("grounded", false);
+            StopCharacter();
+            isDead = true;
+            //animator.Play("DeathAnim");
         }
     }
 
@@ -175,51 +161,6 @@ public class BrotherController : MonoBehaviour {
         keyCount--;
     }
 
-    void PlayerMovement()
-    {
-        Vector3 prevVelocity = rb.velocity;
-
-        rb.velocity = new Vector2(Input.GetAxis("Horizontal") * movementSpeed * Time.deltaTime, rb.velocity.y);
-
-        if ((int)rb.velocity.normalized.x != 0)
-        {
-            if (rb.velocity.normalized.x != prevVelocity.normalized.x)
-            {
-                //desiredAngle = 90 * rb.velocity.normalized.x;
-
-                //StopCoroutine(Turning);
-                //Turning = TurnTo(desiredAngle);
-                //StartCoroutine(Turning);
-            }
-        }
-
-        if (Input.GetKey(KeyCode.D))
-        {
-            animator.SetBool("isMoving", true);
-            desiredAngle = 90;
-
-            StopCoroutine(Turning);
-            Turning = TurnTo(desiredAngle);
-            StartCoroutine(Turning);
-        }
-        else if (Input.GetKey(KeyCode.A))
-        {
-            animator.SetBool("isMoving", true);
-            desiredAngle = -90;
-
-            StopCoroutine(Turning);
-            Turning = TurnTo(desiredAngle);
-            StartCoroutine(Turning);
-        }
-        else
-            animator.SetBool("isMoving", false);
-
-        if (Input.GetKeyDown(KeyCode.Space) && !isJumping)
-        {
-            StartCoroutine(JumpCoroutine());
-        }
-    }
-
     IEnumerator JumpCoroutine()
     {
         isJumping = true;
@@ -227,9 +168,9 @@ public class BrotherController : MonoBehaviour {
 
         yield return new WaitForSeconds(.2f);
 
-        rb.velocity = new Vector2(rb.velocity.x, 0);
+        rigidbody.velocity = new Vector2(rigidbody.velocity.x, 0);
         //Add force on the first frame of the jump
-        rb.AddForce(Vector2.up * 8, ForceMode.Impulse);
+        rigidbody.AddForce(Vector2.up * 8, ForceMode.Impulse);
 
         float currentTime = 0;
 
@@ -238,16 +179,16 @@ public class BrotherController : MonoBehaviour {
             currentTime += Time.deltaTime;
 
             float verticalVel = Mathf.Lerp(jumpSpeed, 0, currentTime / jumpTime);
-            rb.velocity = new Vector2(rb.velocity.x, verticalVel);
+            rigidbody.velocity = new Vector2(rigidbody.velocity.x, verticalVel);
 
             yield return null;
         }
 
-        rb.velocity = new Vector2(rb.velocity.x, -2);
+        rigidbody.velocity = new Vector2(rigidbody.velocity.x, -2);
 
         yield return new WaitUntil(() => !isJumping);
 
-        rb.velocity = new Vector2(rb.velocity.x, 0);
+        rigidbody.velocity = new Vector2(rigidbody.velocity.x, 0);
 
     }
 
@@ -273,26 +214,6 @@ public class BrotherController : MonoBehaviour {
     void StopCharacter()
     {
         animator.SetBool("isMoving", false);
-        rb.velocity = Vector3.zero;
-    }
-
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.transform.tag == "Ground")
-        {
-            if (isJumping)
-            {
-                isJumping = false;
-                animator.SetBool("isJumping", false);
-            }
-        }
-
-        if (collision.transform.tag == "Spike")
-        {
-            StopCharacter();
-            isDead = true;
-            animator.Play("DeathAnim");
-        }
+        rigidbody.velocity = Vector3.zero;
     }
 }
