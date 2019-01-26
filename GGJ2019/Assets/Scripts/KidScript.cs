@@ -9,6 +9,7 @@ public class KidScript : MonoBehaviour {
 
     Rigidbody rb;
     Animator animator;
+    CameraScript camScript;
     bool isJumping;
 
     IEnumerator Turning;
@@ -24,6 +25,7 @@ public class KidScript : MonoBehaviour {
         isJumping = false;
 
         Turning = TurnTo(desiredAngle);
+        camScript = GameObject.Find("Main Camera").GetComponent<CameraScript>();
 	}
 	
 	// Update is called once per frame
@@ -53,11 +55,16 @@ public class KidScript : MonoBehaviour {
                 }
 
             }
-            return;
+        }
+        else
+        {
+            if (Input.GetKeyDown(KeyCode.C))
+            {
+                isCharacterActive = true;
+                camScript.character = transform;
+            }
         }
 
-        if (Input.GetKeyDown(KeyCode.C))
-            isCharacterActive = true;
     }
 
     void PlayerMovement()
