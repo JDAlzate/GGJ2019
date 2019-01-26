@@ -48,7 +48,7 @@ public class BrotherController : MonoBehaviour {
     Vector3 point1;
 
     [SerializeField]
-    float debugRadius = 0.6;
+    float debugRadius = 0.6f;
 
     // Use this for initialization
     void Start ()

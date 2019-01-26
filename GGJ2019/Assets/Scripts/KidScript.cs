@@ -16,9 +16,11 @@ public class KidScript : MonoBehaviour {
     float desiredAngle = 9999;
 
     bool isCharacterActive;
+    bool isDead;
 	// Use this for initialization
 	void Start ()
     {
+        isDead = false;
         isCharacterActive = true;
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
@@ -31,6 +33,9 @@ public class KidScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
+        if (isDead)
+            return;
+
         if(isCharacterActive)
         {
             PlayerMovement();
@@ -54,6 +59,15 @@ public class KidScript : MonoBehaviour {
                     }
                 }
 
+                //if(Physics.Raycast(transform.position, transform.forward, out hit, .1f))
+                //{
+                //    rb.velocity = new Vector2(Input.GetAxis("Horizontal") * movementSpeed * Time.deltaTime, rb.velocity.y);
+                //}
+
+                //if (Physics.Raycast(transform.position, -transform.forward, out hit, .1f))
+                //{
+
+                //}
             }
         }
         else
@@ -161,6 +175,13 @@ public class KidScript : MonoBehaviour {
             {
                 //isJumping = false;
             }
+        }
+
+        if(collision.transform.tag == "Spike")
+        {
+            StopCharacter();
+            isDead = true;
+            animator.Play("DeathAnim");
         }
     }
 }

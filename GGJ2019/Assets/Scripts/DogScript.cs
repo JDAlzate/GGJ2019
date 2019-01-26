@@ -6,21 +6,23 @@ public class DogScript : MonoBehaviour
 {
     [SerializeField] float movementSpeed;
     [SerializeField] float jumpSpeed;
+    float desiredAngle;
+
+    bool isJumping;
+    bool isCharacterActive;
+    [SerializeField] bool stay;
 
     Rigidbody rb;
     Animator animator;
-    bool isJumping;
-
-    IEnumerator Turning;
-    float desiredAngle;
-
-    bool isCharacterActive;
     Transform playerFollowPos;
     CameraScript camScript;
+
+    IEnumerator Turning;
 
     // Use this for initialization
     void Start ()
     {
+        stay = false;
         isCharacterActive = false;
         rb = GetComponent<Rigidbody>();
         //animator = GetComponent<Animator>();
@@ -33,10 +35,17 @@ public class DogScript : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-		if(isCharacterActive)
+        if (Input.GetKeyDown(KeyCode.S))
         {
-            if (!PlayerMovement())
-                StopCharacter();
+            stay = !stay;
+            transform.position = new Vector3(transform.position.x, transform.position.y, -.1f);
+        }
+
+        if (isCharacterActive)
+        {
+            if(!stay)
+                if (!PlayerMovement())
+                    StopCharacter();
 
             if (Input.GetKeyDown(KeyCode.C))
             {
@@ -61,7 +70,14 @@ public class DogScript : MonoBehaviour
         }
         else
         {
-            transform.position = Vector3.Lerp(transform.position, playerFollowPos.position, 100 * Time.deltaTime);
+            if(!stay)
+            {
+                Vector3 newVec = Vector3.zero;
+                transform.position = Vector3.SmoothDamp(transform.position, playerFollowPos.position, ref newVec, .1f, movementSpeed);
+                rb.velocity = newVec;
+
+                //transform.position = Vector3.Lerp(transform.position, playerFollowPos.position, 3 * Time.deltaTime);
+            }
 
             if (Input.GetKeyDown(KeyCode.C))
             {
@@ -94,11 +110,6 @@ public class DogScript : MonoBehaviour
                 //StartCoroutine(Turning);
             }
         }
-
-        //if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.A))
-        //    animator.SetBool("isMoving", true);
-        //else
-        //    animator.SetBool("isMoving", false);
 
         if (Input.GetKeyDown(KeyCode.Space) && !isJumping)
         {
