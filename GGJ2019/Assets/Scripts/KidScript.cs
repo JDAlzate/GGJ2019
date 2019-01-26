@@ -39,6 +39,20 @@ public class KidScript : MonoBehaviour {
                 isCharacterActive = false;
             }
 
+            if(isJumping)
+            {
+                RaycastHit hit;
+
+                if (Physics.Raycast(transform.position, -transform.up, out hit, .2f))
+                {
+                    if (hit.transform.tag == "Ground")
+                    {
+                        animator.SetBool("isJumping", false);
+                        isJumping = false;
+                    }
+                }
+
+            }
             return;
         }
 
@@ -52,9 +66,9 @@ public class KidScript : MonoBehaviour {
 
         rb.velocity = new Vector2(Input.GetAxis("Horizontal") * movementSpeed * Time.deltaTime, rb.velocity.y);
 
-        if(rb.velocity.normalized.x != 0)
+        if((int)rb.velocity.normalized.x != 0)
         {
-            if (rb.velocity.normalized != prevVelocity.normalized)
+            if (rb.velocity.normalized.x != prevVelocity.normalized.x)
             {
                 desiredAngle = 90 * rb.velocity.normalized.x;
 
@@ -74,7 +88,6 @@ public class KidScript : MonoBehaviour {
             StartCoroutine(JumpCoroutine());
         }
     }
-
 
     IEnumerator JumpCoroutine()
     {
@@ -113,13 +126,16 @@ public class KidScript : MonoBehaviour {
         Quaternion currentRot = Quaternion.Euler(transform.eulerAngles);
         Quaternion desiredRot = Quaternion.Euler(new Vector3(0, desiredAngle, 0));
 
-        while ( Quaternion.Angle(currentRot, desiredRot) > 8)
+        while (Quaternion.Angle(currentRot, desiredRot) > 5)
         {
-            transform.eulerAngles = Vector3.Lerp(transform.eulerAngles, new Vector3( 0, desiredAngle, 0), 4 * Time.deltaTime);
+            transform.eulerAngles = Vector3.Lerp(transform.eulerAngles, new Vector3(0, desiredAngle, 0), 4 * Time.deltaTime);
             currentRot = Quaternion.Euler(transform.eulerAngles);
             yield return null;
         }
 
+        transform.eulerAngles = new Vector3(0, desiredAngle, 0);
+
+        yield return null;
     }
 
 
@@ -136,8 +152,7 @@ public class KidScript : MonoBehaviour {
         {
             if (isJumping)
             {
-                isJumping = false;
-                animator.SetBool("isJumping", false);
+                //isJumping = false;
             }
         }
     }
