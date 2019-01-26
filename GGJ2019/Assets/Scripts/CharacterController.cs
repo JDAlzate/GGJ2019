@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class KidScript : MonoBehaviour {
-
+public class CharacterController : MonoBehaviour
+{
     [SerializeField] float movementSpeed;
     [SerializeField] float jumpSpeed;
     [SerializeField] float jumpTime;
@@ -19,8 +19,8 @@ public class KidScript : MonoBehaviour {
     bool isCharacterActive;
     bool isDead;
     bool isSpacebarPressed;
-	// Use this for initialization
-	void Start ()
+    // Use this for initialization
+    void Start()
     {
         isSpacebarPressed = false;
         isDead = false;
@@ -31,18 +31,18 @@ public class KidScript : MonoBehaviour {
 
         Turning = TurnTo(desiredAngle);
         camScript = GameObject.Find("Main Camera").GetComponent<CameraScript>();
-	}
-	
-	// Update is called once per frame
-	void Update ()
+    }
+
+    // Update is called once per frame
+    void FixedUpdate()
     {
         if (isDead)
             return;
 
-        if(Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
             isSpacebarPressed = true;
 
-        if(Input.GetKeyUp(KeyCode.Space))
+        if (Input.GetKeyUp(KeyCode.Space))
             isSpacebarPressed = false;
 
 
@@ -66,6 +66,7 @@ public class KidScript : MonoBehaviour {
             }
         }
 
+
     }
 
     void PlayerMovement()
@@ -74,17 +75,6 @@ public class KidScript : MonoBehaviour {
 
         rb.velocity = new Vector2(Input.GetAxis("Horizontal") * movementSpeed * Time.deltaTime, rb.velocity.y);
 
-        if((int)rb.velocity.normalized.x != 0)
-        {
-            if (rb.velocity.normalized.x != prevVelocity.normalized.x)
-            {
-                //desiredAngle = 90 * rb.velocity.normalized.x;
-
-                //StopCoroutine(Turning);
-                //Turning = TurnTo(desiredAngle);
-                //StartCoroutine(Turning);
-            }
-        }
 
         if (Input.GetKey(KeyCode.D))
         {
@@ -95,7 +85,7 @@ public class KidScript : MonoBehaviour {
             Turning = TurnTo(desiredAngle);
             StartCoroutine(Turning);
         }
-        else if(Input.GetKey(KeyCode.A))
+        else if (Input.GetKey(KeyCode.A))
         {
             animator.SetBool("isMoving", true);
             desiredAngle = -90;
@@ -126,7 +116,7 @@ public class KidScript : MonoBehaviour {
 
         float currentTime = 0;
 
-        while(currentTime < jumpTime && isSpacebarPressed)
+        while (currentTime < jumpTime && (isSpacebarPressed || currentTime < .2f))
         {
             currentTime += Time.deltaTime;
 
@@ -136,9 +126,15 @@ public class KidScript : MonoBehaviour {
             yield return null;
         }
 
-        rb.velocity = new Vector2(rb.velocity.x, -2);
+        while (isJumping)
+        {
 
-        yield return new WaitUntil(() => !isJumping);
+            float verticalVel = Mathf.Lerp(rb.velocity.y, -10, 2 * Time.deltaTime);
+            rb.velocity = new Vector2(rb.velocity.x, verticalVel);
+
+            yield return null;
+        }
+
 
         rb.velocity = new Vector2(rb.velocity.x, 0);
 
@@ -169,10 +165,9 @@ public class KidScript : MonoBehaviour {
         rb.velocity = Vector3.zero;
     }
 
-
     private void OnCollisionEnter(Collision collision)
     {
-        if(collision.transform.tag == "Ground")
+        if (collision.transform.tag == "Ground")
         {
             if (isJumping)
             {
@@ -181,7 +176,7 @@ public class KidScript : MonoBehaviour {
             }
         }
 
-        if(collision.transform.tag == "Spike")
+        if (collision.transform.tag == "Spike")
         {
             StopCharacter();
             isDead = true;

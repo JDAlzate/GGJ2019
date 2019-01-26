@@ -14,25 +14,26 @@ public class CameraScript : MonoBehaviour {
 	void Start ()
     {
 	}
-	
-	void Update ()
+
+
+    private void FixedUpdate()
     {
-        //Lerp to player's pos
-       // Rigidbody rb = character.GetComponent<Rigidbody>();
 
-        //if ((int)rb.velocity.normalized.x == 1)
-        //{
-        //    Debug.Log("Right");
-        //    offset = Mathf.Abs(offset);
-        //}
-        //else if ((int)rb.velocity.normalized.x == -1)
-        //{
-        //    Debug.Log("Left");
-        //    offset = -Mathf.Abs(offset);
-        //}
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            offset = Mathf.Abs(offset);
+        }
+        else if (Input.GetKeyDown(KeyCode.A))
+        {
+            offset = -Mathf.Abs(offset);
+        }
 
-        transform.position = Vector3.Lerp(transform.position, new Vector3(character.position.x,
-                                                                          character.position.y + 2.5f, transform.position.z), 
-                                                                          followSpeed * Time.deltaTime);
+        transform.position = Vector3.Lerp(transform.position, new Vector3(character.position.x + offset,
+                                                                          character.position.y + 2.5f, transform.position.z),
+                                                                          followSpeed);
+    }
+    void Update ()
+    {
+      
     }
 }

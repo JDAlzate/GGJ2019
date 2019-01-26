@@ -18,6 +18,8 @@ public class DogScript : MonoBehaviour
     CameraScript camScript;
 
     IEnumerator Turning;
+    [SerializeField] bool isSpacebarPressed;
+    [SerializeField] float jumpTime;
 
     // Use this for initialization
     void Start ()
@@ -33,12 +35,13 @@ public class DogScript : MonoBehaviour
     }
 	
 	// Update is called once per frame
-	void Update ()
+	void FixedUpdate ()
     {
         if (Input.GetKeyDown(KeyCode.S))
         {
             stay = !stay;
             transform.position = new Vector3(transform.position.x, transform.position.y, -.1f);
+            rb.velocity = Vector3.zero;
         }
 
         if (isCharacterActive)
@@ -92,9 +95,6 @@ public class DogScript : MonoBehaviour
 
     bool PlayerMovement()
     {
-        if (Vector3.Distance(transform.position, playerFollowPos.parent.position) > 5)
-            return false;
-
         Vector3 prevVelocity = rb.velocity;
         
         rb.velocity = new Vector2(Input.GetAxis("Horizontal") * movementSpeed * Time.deltaTime, rb.velocity.y);
@@ -129,10 +129,9 @@ public class DogScript : MonoBehaviour
         //Add force on the first frame of the jump
         rb.AddForce(Vector2.up * 8, ForceMode.Impulse);
 
-        float jumpTime = .7f;
         float currentTime = 0;
 
-        while (currentTime < jumpTime)
+        while (currentTime < jumpTime && isSpacebarPressed)
         {
             currentTime += Time.deltaTime;
 
@@ -160,6 +159,18 @@ public class DogScript : MonoBehaviour
         if(collision.transform.tag == "Ground" && isJumping)
         {
             isJumping = false;
+        }
+
+        if(collision.transform.tag == "Spike" )
+        {
+            if(isCharacterActive)
+            {
+                Debug.Log("Dead");
+            }
+            else
+            {
+                transform.position = playerFollowPos.position;
+            }
         }
     }
 }
