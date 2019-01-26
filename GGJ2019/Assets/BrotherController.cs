@@ -90,7 +90,7 @@ public class BrotherController : MonoBehaviour
         animator.SetBool("run", isMoving);
         animator.SetBool("carry", isCarrying);
 
-        if (isMoving)
+        if (isMoving && !isCarrying)
         {
             desiredAngle = 90 * move;
 
@@ -141,7 +141,7 @@ public class BrotherController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.transform.CompareTag("Ground"))
+        if (collision.transform.CompareTag("Ground") || collision.transform.CompareTag("Pickable"))
         {
             if (isJumping)
             {
@@ -161,6 +161,7 @@ public class BrotherController : MonoBehaviour
             StopCharacter();
             isDead = true;
             //animator.Play("DeathAnim");
+            camScript.character = null;
         }
     }
 

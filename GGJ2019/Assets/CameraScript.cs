@@ -13,6 +13,8 @@ public class CameraScript : MonoBehaviour {
 
     private void FixedUpdate()
     {
+        if (character == null)
+            return;
 
         if (Input.GetKeyDown(KeyCode.D))
         {

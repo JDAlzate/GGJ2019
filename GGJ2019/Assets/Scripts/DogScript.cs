@@ -21,9 +21,12 @@ public class DogScript : MonoBehaviour
     [SerializeField] bool isSpacebarPressed;
     [SerializeField] float jumpTime;
 
+    bool isDead;
+
     // Use this for initialization
     void Start ()
     {
+        isDead = false;
         stay = false;
         isCharacterActive = false;
         rb = GetComponent<Rigidbody>();
@@ -37,6 +40,8 @@ public class DogScript : MonoBehaviour
 	// Update is called once per frame
 	void FixedUpdate ()
     {
+        if (isDead)
+            return;
         if (Input.GetKeyDown(KeyCode.S))
         {
             stay = !stay;
@@ -159,13 +164,15 @@ public class DogScript : MonoBehaviour
         if(collision.transform.tag == "Ground" && isJumping)
         {
             isJumping = false;
+            camScript.character = null;
         }
 
-        if(collision.transform.tag == "Spike" )
+        if (collision.transform.tag == "Spike" )
         {
             if(isCharacterActive)
             {
-                Debug.Log("Dead");
+                isDead = true;
+                rb.velocity = Vector3.zero;
             }
             else
             {
