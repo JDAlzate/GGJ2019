@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PressurePlateScript : MonoBehaviour
 {
-    GateScript gate;
+    [SerializeField] GateScript gate;
 
     void Awake()
     {
