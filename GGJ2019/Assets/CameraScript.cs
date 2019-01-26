@@ -11,11 +11,6 @@ public class CameraScript : MonoBehaviour {
     [SerializeField] float followSpeed;
     [SerializeField] float offset;
 
-	void Start ()
-    {
-	}
-
-
     private void FixedUpdate()
     {
 
@@ -29,7 +24,7 @@ public class CameraScript : MonoBehaviour {
         }
 
         transform.position = Vector3.Lerp(transform.position, new Vector3(character.position.x + offset,
-                                                                          character.position.y + 2.5f, transform.position.z),
+                                                                          character.position.y + 4, transform.position.z),
                                                                           followSpeed);
     }
     void Update ()
