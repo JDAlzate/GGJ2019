@@ -5,7 +5,6 @@ using UnityEngine.SceneManagement;
 
 public class BrotherController : MonoBehaviour
 {
-
     Rigidbody rigidbody;
     Animator animator;
     CameraScript camScript;
