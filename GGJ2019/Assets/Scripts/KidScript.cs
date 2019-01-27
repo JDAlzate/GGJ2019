@@ -76,6 +76,9 @@ public class KidScript : MonoBehaviour {
             {
                 StopCharacter();
                 isCharacterActive = false;
+                dog.GetComponent<DogScript>().isCharacterActive = true;
+                camScript.character = dog.transform;
+                dog.transform.position = new Vector3(dog.transform.position.x, dog.transform.position.y, 0);
             }
 
         }
@@ -85,6 +88,8 @@ public class KidScript : MonoBehaviour {
             {
                 isCharacterActive = true;
                 camScript.character = transform;
+                dog.GetComponent<DogScript>().isCharacterActive = false;
+                dog.transform.position = new Vector3(dog.transform.position.x, dog.transform.position.y, .1f);
             }
         }
 
