@@ -35,7 +35,7 @@ public class KidScript : MonoBehaviour {
 
         Turning = TurnTo(desiredAngle);
         camScript = GameObject.Find("Main Camera").GetComponent<CameraScript>();
-        canSwitchCharacter = brother != null && dog != null;
+        canSwitchCharacter = brother != null;
 	}
 	
 	// Update is called once per frame
@@ -84,7 +84,7 @@ public class KidScript : MonoBehaviour {
                 isCharacterActive = false;
                 dog.GetComponent<DogScript>().isCharacterActive = true;
                 camScript.character = dog.transform;
-                dog.transform.position = new Vector3(dog.transform.position.x, dog.transform.position.y, 0);
+                dog.transform.position = new Vector3(dog.transform.position.x, dog.transform.position.y, transform.position.z);
             }
 
         }
@@ -95,7 +95,9 @@ public class KidScript : MonoBehaviour {
                 isCharacterActive = true;
                 camScript.character = transform;
                 dog.GetComponent<DogScript>().isCharacterActive = false;
-                dog.transform.position = new Vector3(dog.transform.position.x, dog.transform.position.y, .1f);
+
+                if(!dog.GetComponent<DogScript>().stay)
+                   dog.transform.position = new Vector3(dog.transform.position.x, dog.transform.position.y, dog.GetComponent<DogScript>().playerFollowPos.position.z);
             }
         }
 
@@ -105,7 +107,7 @@ public class KidScript : MonoBehaviour {
     {
         Vector3 prevVelocity = rb.velocity;
 
-        rb.velocity = new Vector2(Input.GetAxis("Horizontal") * movementSpeed/* * Time.deltaTime*/, rb.velocity.y);
+        rb.velocity = new Vector2(Input.GetAxis("Horizontal") * movementSpeed * Time.deltaTime, rb.velocity.y);
 
         if((int)rb.velocity.normalized.x != 0)
         {

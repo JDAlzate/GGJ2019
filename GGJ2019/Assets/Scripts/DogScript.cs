@@ -15,7 +15,7 @@ public class DogScript : MonoBehaviour
 
     Rigidbody rb;
     Animator animator;
-    Transform playerFollowPos;
+    public Transform playerFollowPos;
     public CameraScript camScript;
 
     IEnumerator Turning;
@@ -47,11 +47,16 @@ public class DogScript : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.S))
         {
             stay = !stay;
-            transform.position = new Vector3(transform.position.x, transform.position.y, 0);
+            if(stay)
+                transform.position = new Vector3(transform.position.x, transform.position.y, playerFollowPos.parent.position.z);
+            else if(!isCharacterActive)
+                transform.position = new Vector3(transform.position.x, transform.position.y, playerFollowPos.position.z);
+
+
             rb.velocity = Vector3.zero;
         }
 
-        if (isCharacterActive)
+        if (isCharacterActive && !stay)
             PlayerMovement();
 
         else if (!stay)
@@ -66,7 +71,7 @@ public class DogScript : MonoBehaviour
     {
         Vector3 prevVelocity = rb.velocity;
         
-        rb.velocity = new Vector2(Input.GetAxis("Horizontal") * movementSpeed/* * Time.deltaTime*/, rb.velocity.y);
+        rb.velocity = new Vector2(Input.GetAxis("Horizontal") * movementSpeed * Time.deltaTime, rb.velocity.y);
 
         if (Input.GetKeyDown(KeyCode.Space) && !isJumping)
         {
