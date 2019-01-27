@@ -4,13 +4,20 @@ using UnityEngine;
 
 public class CheckPointScript : MonoBehaviour {
 
+    CheckPointManager manager;
     bool isTriggered;
 
     public delegate void MyDelegate();
     public event MyDelegate onRespawn;
-	// Use this for initialization
-	void Start ()
+
+    [SerializeField] KidScript kid;
+    [SerializeField] BrotherController brother;
+    [SerializeField] DogScript dog;
+
+    // Use this for initialization
+    void Start ()
     {
+        manager = transform.parent.GetComponent<CheckPointManager>();
         isTriggered = false;
 	}
 
@@ -19,22 +26,40 @@ public class CheckPointScript : MonoBehaviour {
         if(other.CompareTag("Player") && !isTriggered)
         {
             isTriggered = true;
-            KidScript kid = other.GetComponent<KidScript>();
-            BrotherController brother = other.GetComponent<BrotherController>();
             if(kid)
             {
                 kid.onDeath += OnPlayerDeath;
             }
             
-            else if(brother)
+            if(brother)
             {
                 brother.onDeath += OnPlayerDeath;
             }
+
+            if(dog)
+            {
+                dog.onDeath += OnPlayerDeath;
+            }
+
+            manager.SetActive(this);
         }
     }
     
     void OnPlayerDeath()
     {
-        onRespawn.Invoke();
+        if (isTriggered)
+        {
+            kid.transform.position = transform.position;
+            brother.transform.position = transform.position;
+            dog.transform.position = transform.position;
+
+            if (onRespawn != null)
+                onRespawn.Invoke();
+        }
+    }
+
+    public void SetTriggered(bool triggered)
+    {
+        isTriggered = triggered;
     }
 }

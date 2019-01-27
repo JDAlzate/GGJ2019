@@ -59,6 +59,12 @@ public class BrotherController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(Input.GetKeyDown(KeyCode.L))
+        {
+            isDead = true;
+            animator.Play("Death");
+            StartCoroutine(Respawn());
+        }
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             Application.Quit();
@@ -248,8 +254,13 @@ public class BrotherController : MonoBehaviour
         rigidBody.velocity = Vector3.zero;
     }
 
-    public void Respawn()
+    IEnumerator Respawn()
     {
-        onDeath.Invoke();
+        yield return new WaitForSeconds(1.2f);
+
+        if (onDeath != null)
+            onDeath.Invoke();
+        animator.Play("Idle");
+        isDead = false;
     }
 }
