@@ -15,6 +15,8 @@ public class DogScript : MonoBehaviour
 
     Rigidbody rb;
     Animator animator;
+    GameObject stayIndicator;
+
     public Transform playerFollowPos;
     public CameraScript camScript;
 
@@ -36,6 +38,9 @@ public class DogScript : MonoBehaviour
         camScript = GameObject.Find("Main Camera").GetComponent<CameraScript>();
 
         playerFollowPos = GameObject.Find("Kid").transform.Find("FollowPos");
+
+        stayIndicator = transform.Find("Wait").gameObject;
+        stayIndicator.SetActive(false);
     }
 	
 	// Update is called once per frame
@@ -47,7 +52,9 @@ public class DogScript : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.S))
         {
             stay = !stay;
-            if(stay)
+            stayIndicator.SetActive(stay);
+
+            if (stay)
                 transform.position = new Vector3(transform.position.x, transform.position.y, playerFollowPos.parent.position.z);
             else if(!isCharacterActive)
                 transform.position = new Vector3(transform.position.x, transform.position.y, playerFollowPos.position.z);
