@@ -10,6 +10,8 @@ public class LeverScript : MonoBehaviour {
     [SerializeField]
     Transform[] platform;
 
+    Renderer handleRenderer;
+
     [SerializeField]
     Transform[] targetTransform;
 
@@ -19,9 +21,18 @@ public class LeverScript : MonoBehaviour {
 
     [SerializeField] Material[] colors = new Material[2];
 
-	// Use this for initialization
-	void Start ()
+    RespawnController respawnController;
+
+    // Use this for initialization
+    void Start ()
     {
+         respawnController = gameObject.GetComponent<RespawnController>();
+
+        if (respawnController)
+            respawnController.onRespawn += ResetObject;
+
+        handleRenderer = transform.Find("Base").Find("Handle").GetComponent<Renderer>();
+
         initialPosition = new Vector3[platform.Length];
 
         for (int i = 0; i < platform.Length; i++)
@@ -41,9 +52,9 @@ public class LeverScript : MonoBehaviour {
             isTowardsTarget = !isTowardsTarget;
 
             if(isTowardsTarget)
-                transform.Find("Base").Find("Handle").GetComponent<Renderer>().material = colors[0];
+                handleRenderer.material = colors[0];
             else
-                transform.Find("Base").Find("Handle").GetComponent<Renderer>().material = colors[1];
+                handleRenderer.material = colors[1];
         }
 
         if (!isTowardsTarget)
@@ -84,6 +95,18 @@ public class LeverScript : MonoBehaviour {
         if (other.CompareTag("Player"))
         {
             canPull = false;
+        }
+    }
+
+    private void ResetObject()
+    {
+        isTowardsTarget = false;
+
+        handleRenderer.material = colors[1];
+
+        for (int i = 0; i < platform.Length; i++)
+        {
+            platform[i].position = initialPosition[i];
         }
     }
 }

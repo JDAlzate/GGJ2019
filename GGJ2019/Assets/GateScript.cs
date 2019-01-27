@@ -12,9 +12,16 @@ public class GateScript : MonoBehaviour {
 
     bool isCoroutineRunning;
 
+    RespawnController respawnController;
+
     // Use this for initialization
     void Start ()
     {
+        respawnController = gameObject.GetComponent<RespawnController>();
+
+        if (respawnController)
+            respawnController.onRespawn += ResetObject;
+
         initialPos = transform.position;
         finalPos = transform.Find("OpenTransform").position;
 
@@ -78,6 +85,17 @@ public class GateScript : MonoBehaviour {
         }
 
         isCoroutineRunning = false;
+    }
+
+    private void ResetObject()
+    {
+        if (isCoroutineRunning)
+        {
+            StopAllCoroutines();
+        }
+        isCoroutineRunning = false;
+        transform.position = initialPos;
+        charactersOnMe = 0;
     }
 
 }
