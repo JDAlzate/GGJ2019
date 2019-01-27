@@ -41,6 +41,11 @@ public class KidScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
+
         if (isDead)
             return;
 
@@ -100,7 +105,7 @@ public class KidScript : MonoBehaviour {
     {
         Vector3 prevVelocity = rb.velocity;
 
-        rb.velocity = new Vector2(Input.GetAxis("Horizontal") * movementSpeed * Time.deltaTime, rb.velocity.y);
+        rb.velocity = new Vector2(Input.GetAxis("Horizontal") * movementSpeed/* * Time.deltaTime*/, rb.velocity.y);
 
         if((int)rb.velocity.normalized.x != 0)
         {

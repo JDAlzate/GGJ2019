@@ -57,6 +57,11 @@ public class BrotherController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
+
         if (isDead)
             return;
 
@@ -102,7 +107,7 @@ public class BrotherController : MonoBehaviour
 
         if (!isCarrying)
         {
-            rigidbody.velocity = new Vector2(move * speed * Time.deltaTime, rigidbody.velocity.y);
+            rigidbody.velocity = new Vector2(move * speed/* * Time.deltaTime*/, rigidbody.velocity.y);
 
             if (Input.GetKeyDown(KeyCode.Space) && !isJumping)
             {
@@ -128,7 +133,7 @@ public class BrotherController : MonoBehaviour
 
         else if (isCarrying)
         {
-            rigidbody.velocity = new Vector2(move * carryingSpeed * Time.deltaTime, rigidbody.velocity.y);
+            rigidbody.velocity = new Vector2(move * carryingSpeed/* * Time.deltaTime*/, rigidbody.velocity.y);
 
             if (Input.GetMouseButtonUp(0) && !isJumping)
             {

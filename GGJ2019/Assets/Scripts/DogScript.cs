@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class DogScript : MonoBehaviour
 {
@@ -65,7 +66,7 @@ public class DogScript : MonoBehaviour
     {
         Vector3 prevVelocity = rb.velocity;
         
-        rb.velocity = new Vector2(Input.GetAxis("Horizontal") * movementSpeed * Time.deltaTime, rb.velocity.y);
+        rb.velocity = new Vector2(Input.GetAxis("Horizontal") * movementSpeed/* * Time.deltaTime*/, rb.velocity.y);
 
         if (Input.GetKeyDown(KeyCode.Space) && !isJumping)
         {
@@ -129,6 +130,14 @@ public class DogScript : MonoBehaviour
             {
                 transform.position = playerFollowPos.position;
             }
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Finish"))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         }
     }
 }
