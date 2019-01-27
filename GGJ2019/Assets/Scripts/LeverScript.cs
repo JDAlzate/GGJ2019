@@ -8,12 +8,12 @@ public class LeverScript : MonoBehaviour {
     bool canPull;
 
     [SerializeField]
-    Transform platform;
+    Transform[] platform;
 
     [SerializeField]
-    Transform targetTransform;
+    Transform[] targetTransform;
 
-    Vector3 initialPosition;
+    Vector3[] initialPosition;
 
     bool isTowardsTarget;
 
@@ -22,7 +22,12 @@ public class LeverScript : MonoBehaviour {
 	// Use this for initialization
 	void Start ()
     {
-        initialPosition = platform.position;
+        initialPosition = new Vector3[platform.Length];
+
+        for (int i = 0; i < platform.Length; i++)
+        {
+            initialPosition[i] = platform[i].position;
+        }
 
         canPull = false;
         isTowardsTarget = false;
@@ -42,16 +47,27 @@ public class LeverScript : MonoBehaviour {
         }
 
         if (!isTowardsTarget)
-            GoTowards(initialPosition);
+        {
+            for (int i = 0; i < platform.Length; i++)
+            {
+                GoTowards(platform[i], initialPosition[i]);
+
+            }
+        }
         else
-            GoTowards(targetTransform.position);
+        {
+            for (int i = 0; i < platform.Length; i++)
+            {
+                GoTowards(platform[i], targetTransform[i].position);
+            }
+        }
     }
 
-    private void GoTowards(Vector3 targetPosition)
+    private void GoTowards(Transform platform, Vector3 targetPosition)
     {
-        if (Vector3.Distance(platform.transform.position, targetPosition) > 0.1f)
+        if (Vector3.Distance(platform.position, targetPosition) > 0.1f)
         {
-            platform.transform.position = Vector3.Lerp(platform.transform.position, targetPosition, 0.05f);
+            platform.position = Vector3.Lerp(platform.position, targetPosition, 0.05f);
         }
     }
 

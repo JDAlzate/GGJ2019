@@ -47,6 +47,7 @@ public class KidScript : MonoBehaviour {
         if(canSwitchCharacter && Input.GetKeyDown(KeyCode.F))
         {
             brother.transform.position = transform.position;
+            camScript.character = brother.transform;
 
             if (transform.rotation.y > 0)
                 brother.transform.rotation = Quaternion.Euler(0, 90, 0);

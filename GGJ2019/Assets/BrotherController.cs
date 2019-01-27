@@ -63,6 +63,7 @@ public class BrotherController : MonoBehaviour
         if (canSwitchCharacter && Input.GetKeyDown(KeyCode.F))
         {
             kid.transform.position = transform.position;
+            camScript.character = kid.transform;
 
             if (transform.rotation.y > 0)
                 kid.transform.rotation = Quaternion.Euler(0, 90, 0);
