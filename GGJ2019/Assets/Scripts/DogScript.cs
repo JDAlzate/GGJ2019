@@ -15,7 +15,7 @@ public class DogScript : MonoBehaviour
     Rigidbody rb;
     Animator animator;
     Transform playerFollowPos;
-    CameraScript camScript;
+    public CameraScript camScript;
 
     IEnumerator Turning;
     [SerializeField] bool isSpacebarPressed;
@@ -51,33 +51,13 @@ public class DogScript : MonoBehaviour
         }
 
         if (isCharacterActive)
+            PlayerMovement();
+
+        else if (!stay)
         {
-            if(!stay)
-                if (!PlayerMovement())
-                    StopCharacter();
-
-            if (Input.GetKeyDown(KeyCode.C))
-            {
-                isCharacterActive = false;
-                transform.position = new Vector3(transform.position.x, transform.position.y, .1f);
-            }
-
-        }
-        else
-        {
-            if(!stay)
-            {
-                Vector3 newVec = Vector3.zero;
-                transform.position = Vector3.SmoothDamp(transform.position, playerFollowPos.position, ref newVec, .1f, movementSpeed);
-                rb.velocity = newVec;
-            }
-
-            if (Input.GetKeyDown(KeyCode.C))
-            {
-                camScript.character = transform;
-                isCharacterActive = true;
-                transform.position = new Vector3(transform.position.x, transform.position.y, 0);
-            }
+            Vector3 newVec = Vector3.zero;
+            transform.position = Vector3.SmoothDamp(transform.position, playerFollowPos.position, ref newVec, .1f, movementSpeed);
+            rb.velocity = newVec;
         }
     }
 
