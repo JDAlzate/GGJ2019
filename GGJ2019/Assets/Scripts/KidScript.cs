@@ -23,8 +23,11 @@ public class KidScript : MonoBehaviour {
     bool isSpacebarPressed;
 
     bool canSwitchCharacter;
-	// Use this for initialization
-	void Start ()
+
+    public delegate void MyDelegate();
+    public event MyDelegate onDeath;
+    // Use this for initialization
+    void Start ()
     {
         isSpacebarPressed = false;
         isDead = false;
@@ -41,6 +44,13 @@ public class KidScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
+        //TEMP
+        if(Input.GetKeyDown(KeyCode.L))
+        {
+            Respawn();
+        }
+
+
         if(Input.GetKeyDown(KeyCode.Escape))
         {
             Application.Quit();
@@ -220,8 +230,13 @@ public class KidScript : MonoBehaviour {
         {
             StopCharacter();
             isDead = true;
-            camScript.character = null;
+            //camScript.character = null;
             animator.Play("DeathAnim");
         }
+    }
+
+    public void Respawn()
+    {
+        onDeath.Invoke();
     }
 }

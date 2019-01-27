@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class BrotherController : MonoBehaviour
 {
-    Rigidbody rigidbody;
+    Rigidbody rigidBody;
     Animator animator;
     CameraScript camScript;
     bool isJumping;
@@ -38,6 +38,9 @@ public class BrotherController : MonoBehaviour
     IEnumerator Turning;
     float desiredAngle = 0;
 
+    public delegate void MyDelegate();
+    public event MyDelegate onDeath;
+
     // Use this for initialization
     void Start()
     {
@@ -45,7 +48,7 @@ public class BrotherController : MonoBehaviour
         isDead = false;
         isCharacterActive = true;
         isJumping = false;
-        rigidbody = GetComponent<Rigidbody>();
+        rigidBody = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
         raycastTransform = transform.Find("Raycast Position").transform;
         Turning = TurnTo(desiredAngle);
@@ -87,7 +90,7 @@ public class BrotherController : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.Space))
             isSpacebarPressed = false;
 
-        Vector3 prevVelocity = rigidbody.velocity;
+        Vector3 prevVelocity = rigidBody.velocity;
 
         move = Input.GetAxisRaw("Horizontal");
 
@@ -106,7 +109,7 @@ public class BrotherController : MonoBehaviour
 
         if (!isCarrying)
         {
-            rigidbody.velocity = new Vector2(move * speed/* * Time.deltaTime*/, rigidbody.velocity.y);
+            rigidBody.velocity = new Vector2(move * speed/* * Time.deltaTime*/, rigidBody.velocity.y);
 
             if (Input.GetKeyDown(KeyCode.Space) && !isJumping)
             {
@@ -132,7 +135,7 @@ public class BrotherController : MonoBehaviour
 
         else if (isCarrying)
         {
-            rigidbody.velocity = new Vector2(move * carryingSpeed/* * Time.deltaTime*/, rigidbody.velocity.y);
+            rigidBody.velocity = new Vector2(move * carryingSpeed/* * Time.deltaTime*/, rigidBody.velocity.y);
 
             if (Input.GetMouseButtonUp(0) && !isJumping)
             {
@@ -196,9 +199,9 @@ public class BrotherController : MonoBehaviour
 
         yield return new WaitForSeconds(.2f);
 
-        rigidbody.velocity = new Vector2(rigidbody.velocity.x, 0);
+        rigidBody.velocity = new Vector2(rigidBody.velocity.x, 0);
         //Add force on the first frame of the jump
-        rigidbody.AddForce(Vector2.up * 8, ForceMode.Impulse);
+        rigidBody.AddForce(Vector2.up * 8, ForceMode.Impulse);
 
         float currentTime = 0;
 
@@ -207,16 +210,16 @@ public class BrotherController : MonoBehaviour
             currentTime += Time.deltaTime;
 
             float verticalVel = Mathf.Lerp(jumpSpeed, 0, currentTime / jumpTime);
-            rigidbody.velocity = new Vector2(rigidbody.velocity.x, verticalVel);
+            rigidBody.velocity = new Vector2(rigidBody.velocity.x, verticalVel);
 
             yield return null;
         }
 
-        rigidbody.velocity = new Vector2(rigidbody.velocity.x, -2);
+        rigidBody.velocity = new Vector2(rigidBody.velocity.x, -2);
 
         yield return new WaitUntil(() => !isJumping);
 
-        rigidbody.velocity = new Vector2(rigidbody.velocity.x, 0);
+        rigidBody.velocity = new Vector2(rigidBody.velocity.x, 0);
 
     }
 
@@ -242,6 +245,11 @@ public class BrotherController : MonoBehaviour
     void StopCharacter()
     {
         animator.SetBool("isMoving", false);
-        rigidbody.velocity = Vector3.zero;
+        rigidBody.velocity = Vector3.zero;
+    }
+
+    public void Respawn()
+    {
+        onDeath.Invoke();
     }
 }
