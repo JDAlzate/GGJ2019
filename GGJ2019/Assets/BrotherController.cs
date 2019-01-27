@@ -115,7 +115,7 @@ public class BrotherController : MonoBehaviour
 
         if (!isCarrying)
         {
-            rigidBody.velocity = new Vector2(move * speed/* * Time.deltaTime*/, rigidBody.velocity.y);
+            rigidBody.velocity = new Vector2(move * speed * Time.deltaTime, rigidBody.velocity.y);
 
             if (Input.GetKeyDown(KeyCode.Space) && !isJumping)
             {
@@ -131,6 +131,11 @@ public class BrotherController : MonoBehaviour
                 {
                     if (hit.transform.CompareTag("Pickable"))
                     {
+                        if (transform.rotation.y > 0)
+                            transform.rotation = Quaternion.Euler(0, 90, 0);
+                        if (transform.rotation.y < 0)
+                            transform.rotation = Quaternion.Euler(0, -90, 0);
+
                         carryItem = hit.transform.gameObject;
                         carryItem.transform.parent = transform;
                         isCarrying = true;
@@ -141,7 +146,7 @@ public class BrotherController : MonoBehaviour
 
         else if (isCarrying)
         {
-            rigidBody.velocity = new Vector2(move * carryingSpeed/* * Time.deltaTime*/, rigidBody.velocity.y);
+            rigidBody.velocity = new Vector2(move * carryingSpeed * Time.deltaTime, rigidBody.velocity.y);
 
             if (Input.GetMouseButtonUp(0) && !isJumping)
             {

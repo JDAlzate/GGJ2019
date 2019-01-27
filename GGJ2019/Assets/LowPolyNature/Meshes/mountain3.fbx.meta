@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 933ffaccfdf2f824aade51ec3a7e5208
+guid: a13b2b616ca2f1a41983035783223ec9
 timeCreated: 1495710663
 licenseType: Store
 ModelImporter:
@@ -9,7 +9,7 @@ ModelImporter:
     400000: //RootNode
     2300000: //RootNode
     3300000: //RootNode
-    4300000: mountain2
+    4300000: mountain3
   materials:
     importMaterials: 1
     materialName: 0
