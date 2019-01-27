@@ -49,8 +49,11 @@ public class CheckPointScript : MonoBehaviour {
     {
         if (isTriggered)
         {
+            if(kid)
             kid.transform.position = transform.position;
+            if(brother)
             brother.transform.position = transform.position;
+            if(dog)
             dog.transform.position = transform.position;
 
             if (onRespawn != null)
