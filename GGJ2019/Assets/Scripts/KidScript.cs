@@ -47,7 +47,9 @@ public class KidScript : MonoBehaviour {
         //TEMP
         if(Input.GetKeyDown(KeyCode.L))
         {
-            Respawn();
+            isDead = true;
+            animator.Play("DeathAnim");
+            StartCoroutine(Respawn());
         }
 
 
@@ -96,7 +98,6 @@ public class KidScript : MonoBehaviour {
                 camScript.character = dog.transform;
                 dog.transform.position = new Vector3(dog.transform.position.x, dog.transform.position.y, transform.position.z);
             }
-
         }
         else
         {
@@ -110,7 +111,6 @@ public class KidScript : MonoBehaviour {
                    dog.transform.position = new Vector3(dog.transform.position.x, dog.transform.position.y, dog.GetComponent<DogScript>().playerFollowPos.position.z);
             }
         }
-
     }
 
     void PlayerMovement()
@@ -230,13 +230,19 @@ public class KidScript : MonoBehaviour {
         {
             StopCharacter();
             isDead = true;
+            StartCoroutine(Respawn());
             //camScript.character = null;
             animator.Play("DeathAnim");
         }
     }
 
-    public void Respawn()
+    IEnumerator Respawn()
     {
-        onDeath.Invoke();
+        yield return new WaitForSeconds(1.2f);
+
+        if(onDeath != null)
+            onDeath.Invoke();
+        animator.Play("Idle");
+        isDead = false;
     }
 }

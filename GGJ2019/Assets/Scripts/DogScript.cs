@@ -26,6 +26,8 @@ public class DogScript : MonoBehaviour
 
     bool isDead;
 
+    public delegate void MyDelegate();
+    public event MyDelegate onDeath;
     // Use this for initialization
     void Start ()
     {
@@ -46,6 +48,11 @@ public class DogScript : MonoBehaviour
 	// Update is called once per frame
 	void FixedUpdate ()
     {
+        if(Input.GetKeyDown(KeyCode.L))
+        {
+            Respawn();
+        }
+
         if (isDead)
             return;
 
@@ -151,5 +158,13 @@ public class DogScript : MonoBehaviour
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         }
+    }
+
+    IEnumerator Respawn()
+    {
+        yield return new WaitForSeconds(1.0f);
+
+        if (onDeath != null)
+            onDeath.Invoke();
     }
 }

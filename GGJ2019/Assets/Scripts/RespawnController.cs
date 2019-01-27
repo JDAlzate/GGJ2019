@@ -14,11 +14,16 @@ public class RespawnController : MonoBehaviour
 
     private void Awake()
     {
+        initialPosition = transform.position;
         checkpoint.onRespawn += OnRespawn;
     }
 
     public void OnRespawn()
     {
-        this.onRespawn.Invoke();
+        if (onRespawn != null)
+            onRespawn.Invoke();
+
+        else
+            transform.position = initialPosition;
     }
 }
