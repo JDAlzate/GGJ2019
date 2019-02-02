@@ -163,8 +163,6 @@ public class KidScript : MonoBehaviour {
         isJumping = true;
         animator.SetBool("isJumping", true);
 
-        yield return new WaitForSeconds(.2f);
-
         rb.velocity = new Vector2(rb.velocity.x, 0);
         //Add force on the first frame of the jump
         rb.AddForce(Vector2.up * 8, ForceMode.Impulse);
