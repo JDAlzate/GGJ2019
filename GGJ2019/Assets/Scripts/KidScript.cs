@@ -115,42 +115,60 @@ public class KidScript : MonoBehaviour {
 
     void PlayerMovement()
     {
+        //Vector3 prevVelocity = rb.velocity;
+
+        //rb.velocity = new Vector2(Input.GetAxisRaw("Horizontal") * movementSpeed * Time.deltaTime, rb.velocity.y);
+
+        //if((int)rb.velocity.normalized.x != 0)
+        //{
+        //    if (rb.velocity.normalized.x != prevVelocity.normalized.x)
+        //    {
+        //        //desiredAngle = 90 * rb.velocity.normalized.x;
+
+        //        //StopCoroutine(Turning);
+        //        //Turning = TurnTo(desiredAngle);
+        //        //StartCoroutine(Turning);
+        //    }
+        //}
+
+        //if (/*Input.GetKey(KeyCode.D)*/Input.GetAxisRaw("Horizontal") > 0)
+        //{
+        //    animator.SetBool("isMoving", true);
+        //    desiredAngle = 90;
+
+        //    StopCoroutine(Turning);
+        //    Turning = TurnTo(desiredAngle);
+        //    StartCoroutine(Turning);
+        //}
+        //else if(Input.GetKey(KeyCode.A))
+        //{
+        //    animator.SetBool("isMoving", true);
+        //    desiredAngle = -90;
+
+        //    StopCoroutine(Turning);
+        //    Turning = TurnTo(desiredAngle);
+        //    StartCoroutine(Turning);
+        //}
+        //else
+        //    animator.SetBool("isMoving", false);
+
         Vector3 prevVelocity = rb.velocity;
 
-        rb.velocity = new Vector2(Input.GetAxis("Horizontal") * movementSpeed * Time.deltaTime, rb.velocity.y);
+        float move = Input.GetAxisRaw("Horizontal");
 
-        if((int)rb.velocity.normalized.x != 0)
+        rb.velocity = new Vector2(move * movementSpeed * Time.deltaTime, rb.velocity.y);
+
+        bool isMoving = (move != 0);
+        animator.SetBool("isMoving", isMoving);
+
+        if (isMoving)
         {
-            if (rb.velocity.normalized.x != prevVelocity.normalized.x)
-            {
-                //desiredAngle = 90 * rb.velocity.normalized.x;
-
-                //StopCoroutine(Turning);
-                //Turning = TurnTo(desiredAngle);
-                //StartCoroutine(Turning);
-            }
-        }
-
-        if (Input.GetKey(KeyCode.D))
-        {
-            animator.SetBool("isMoving", true);
-            desiredAngle = 90;
+            desiredAngle = 90 * move;
 
             StopCoroutine(Turning);
             Turning = TurnTo(desiredAngle);
             StartCoroutine(Turning);
         }
-        else if(Input.GetKey(KeyCode.A))
-        {
-            animator.SetBool("isMoving", true);
-            desiredAngle = -90;
-
-            StopCoroutine(Turning);
-            Turning = TurnTo(desiredAngle);
-            StartCoroutine(Turning);
-        }
-        else
-            animator.SetBool("isMoving", false);
 
         if (Input.GetKeyDown(KeyCode.Space) && !isJumping)
         {

@@ -16,11 +16,12 @@ public class CameraScript : MonoBehaviour {
         if (character == null)
             return;
 
-        if (Input.GetKeyDown(KeyCode.D))
+        if (/*Input.GetKeyDown(KeyCode.D)*/Input.GetAxisRaw("Horizontal") > 0)
         {
             offset = Mathf.Abs(offset);
         }
-        else if (Input.GetKeyDown(KeyCode.A))
+
+        if (/*Input.GetKeyDown(KeyCode.A)*/Input.GetAxisRaw("Horizontal") < 0)
         {
             offset = -Mathf.Abs(offset);
         }
