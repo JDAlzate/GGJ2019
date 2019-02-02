@@ -208,8 +208,6 @@ public class BrotherController : MonoBehaviour
         isJumping = true;
         animator.SetBool("jump", true);
 
-        yield return new WaitForSeconds(.2f);
-
         rigidBody.velocity = new Vector2(rigidBody.velocity.x, 0);
         //Add force on the first frame of the jump
         rigidBody.AddForce(Vector2.up * 8, ForceMode.Impulse);
